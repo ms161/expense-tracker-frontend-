@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import NavBar from './NavBar';
+import { useNavigate } from 'react-router-dom';
 function LoginPage() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+    const navigate=useNavigate()
     const [error, setError] = useState('')
 
     const handleChange = (e) => {
@@ -17,14 +19,17 @@ function LoginPage() {
     };
     console.log(formData)
 
-    const signUpHandle = async (e) => {
+    const loginHandle = async (e) => {
         try {
             e.preventDefault()
-            const resp = await axios.post('http://localhost:5000/sign-up', formData)
+            const resp = await axios.post('http://localhost:5000/login', formData)
             console.log(resp)
+            if (resp.status === 200) {
+              navigate('/add-expense')
+            }
         }
         catch (err) {
-            setError('User Already Exist')
+            setError(err.response.data.message)
             console.log(err)
         }
 
@@ -35,9 +40,9 @@ function LoginPage() {
 
     return (
         <>
-        <NavBar/>
+            <NavBar />
             <h1 className="flex "></h1>
-            <form onSubmit={signUpHandle} className="flex flex-col m-auto justify-center gap-y-9 mt-10 " action="">
+            <form onSubmit={loginHandle} className="flex flex-col m-auto justify-center gap-y-9 mt-10 " action="">
                 <input
                     className="border-b border-black w-96 p-3 m-auto"
                     type="email"
